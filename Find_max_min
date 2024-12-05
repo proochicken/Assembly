@@ -1,90 +1,75 @@
-//Viết chương trình hợp ngữ Assembly tìm giá trị lớn nhất và nhỏ nhất của một mảng số.
-
 .model small
 .stack 100h
 .data
-   array dw 5, 3, 8, 1, 9, 2
-   length dw 6
-   max dw ?
-   min dw ? 
-   crlf db 13, 10, '$'
-   
+     str db 100 dup('$')
+     crlf db 13, 10, '$'
+     max db ?
+     min db ?
+
 .code
 main proc
      mov ax, @data
      mov ds, ax
      
-     lea si, array
-     mov ax, [si]
-     mov max, ax
-     mov min, ax 
+     lea si, str
+     mov cx, 0
      
-     mov cx, length
-     dec cx
-     
-find:
-    inc si
-    inc si
-    mov bx, [si]
-    
-    cmp bx, max
-    jle check_min
-    mov max, bx
-    
-check_min:
-    cmp bx, min
-    jge next_loop
-    mov min, bx
-    
-next_loop:
-    loop find
-    
-    mov ax, max 
-    call screen
-    
-    mov ax, min
-    call screen
-    
-    mov ah, 4
-    int 21h
-    
-screen proc
-    push ax
-    push bx
-    push cx
-    push dx
-    
-    mov cx, 0
-    mov bx, 10
-    
-convert:
-    mov dx, 0
-    div bx
-    push dx
-    inc cx
-    cmp ax, 0
-    jnz convert
-    
-hienthi:
-    pop dx
-    add dl, '0'
-    mov ah, 2
-    int 21h
-    loop hienthi
-    
-    lea dx, crlf
-    mov ah, 9
-    int 21h 
-    
-    mov dl, 10
-    mov ah, 2
-    int 21h
-    
-    pop dx
-    pop cx
-    pop bx
-    pop ax
-    ret
-screen endp
+     lap:    
+         mov ah, 1
+         int 21h    
+         cmp al, 13
+         je break
+         mov [si], al
+         
+         inc cx
+         inc si
+         jmp lap
+         
+     break: 
+        mov ah, 9
+        lea dx, crlf
+        int 21h  
+        
+        lea si, str  
+        mov al, [si]
+        mov max, al
+        mov min, al
+        dec cx
+                       
+     find:
+        inc si
+        mov bl, [si]
+        cmp bl, max
+        jle check_min
+        mov max, bl
+        
+        check_min:
+        cmp bl, min
+        jge next_loop
+        mov min, bl  
+        
+        next_loop:
+        loop find 
+        
+        mov al, max
+ 
+        mov dl, al
+        mov ah, 2   
+        int 21h   
+                 
+        mov ah, 9
+        lea dx, crlf
+        int 21h         
+        
+        mov al, min
+
+        mov dl, al
+        mov ah, 2   
+        int 21h 
+        
+        
+main endp
 
 end main
+
+        
